@@ -1,12 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue May 26 20:09:46 2026
-
-@author: Vicenzo
-"""
-
-# -*- coding: utf-8 -*-
-"""
 Created on Thu May 21 15:17:56 2026
 
 @author: Vicenzo
@@ -297,4 +290,41 @@ R_PCT = st.sidebar.number_input("Risco Alvo (%):", min_value=0.01, max_value=99.
 
 risco = R_PCT / 100.0
 
-if st.sidebar.button("
+if st.sidebar.button("Calcular Dimensionamento"):
+    
+    df_p, x_p, m_val = calcular_poisson(L, N, T, risco)
+    df_n, x_n, sigma_val = calcular_normal(L, N, T, risco)
+    
+    n_10PCT = max(1, int(np.ceil(0.10 * N)))
+
+    st.subheader("Parâmetros Utilizados")
+    col1, col2, col3 = st.columns(3)
+    col1.metric("Valor Esperado de Falhas (m)", f"{m_val:.2f}")
+    col2.metric("Risco Alvo", f"{R_PCT}%")
+    col3.metric("Regra dos 10%", f"{n_10PCT} peças")
+
+    st.divider()
+
+    def exibir_resumo_streamlit(df, x_alvo, titulo):
+        st.subheader(titulo)
+        
+        idx_inicio = max(0, x_alvo - 1)
+        resumo = df.iloc[idx_inicio : x_alvo + 2].copy()
+        
+        resumo['P(X=x)'] = resumo['P(X=x)'].apply(lambda v: f"{v:.4%}")
+        resumo['Margem Seg.'] = resumo['Margem Seg.'].apply(lambda v: f"{v:.4%}")
+        resumo['Risco'] = resumo['Risco'].apply(lambda v: f"{v:.4%}")
+        
+        st.success(f"**Quantidade Recomendada:** {x_alvo} peças")
+        st.dataframe(resumo, use_container_width=True, hide_index=True)
+
+    col_tabela1, col_tabela2 = st.columns(2)
+    
+    with col_tabela1:
+        exibir_resumo_streamlit(df_p, x_p, "Distribuição de Poisson")
+        
+    with col_tabela2:
+        if m_val >= 10:
+            exibir_resumo_streamlit(df_n, x_n, "Aproximação Normal")
+        else:
+            st.info("Aproximação pela Normal não recomendada pois a média de falhas (m) é menor que 10.")
