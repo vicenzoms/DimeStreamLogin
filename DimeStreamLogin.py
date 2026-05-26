@@ -27,8 +27,8 @@ def image_to_base64(path):
     except Exception:
         return ""
 
-# Carrega a imagem enviada para ser o plano de fundo (substituindo a capa.png do código original)
-LOGIN_BG_BASE64 = image_to_base64("image_de9623.png")
+# Tenta carregar uma imagem de fundo (opcional, pode ser a mesma capa.png usada no outro app)
+LOGIN_BG_BASE64 = image_to_base64("capa.png")
 LOGIN_BG_URL = f"data:image/png;base64,{LOGIN_BG_BASE64}" if LOGIN_BG_BASE64 else ""
 
 if "authenticated" not in st.session_state:
@@ -176,11 +176,7 @@ if not st.session_state.authenticated:
     left_space, right_login = st.columns([1.72, 0.52], gap="medium")
 
     with left_space:
-        # Renderiza a imagem também no espaço à esquerda sem quebrar o grid nativo
-        try:
-            st.image("image_de9623.png", use_container_width=True)
-        except Exception:
-            st.markdown("<div style='height: 1px;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='height: 1px;'></div>", unsafe_allow_html=True)
 
     with right_login:
         st.markdown(
@@ -192,12 +188,12 @@ if not st.session_state.authenticated:
             unsafe_allow_html=True
         )
         with st.form("login_form", clear_on_submit=False):
-            # Criei a lógica para Vicenzo com a senha 12345
             username = st.text_input("Usuário", placeholder="Digite seu usuário")
             password = st.text_input("Senha", type="password", placeholder="Digite sua senha")
             submitted = st.form_submit_button("Entrar", use_container_width=True)
 
         if submitted:
+            # Login e Senha configurados conforme solicitado
             if username.strip().lower() == "vicenzo" and password == "12345":
                 st.session_state.authenticated = True
                 st.rerun()
@@ -289,10 +285,11 @@ st.sidebar.header("Parâmetros de Entrada")
 
 L = st.sidebar.number_input("Lambda (taxa de falha):", min_value=0.0000, value=0.05, step=0.01, format="%.6f")
 N = st.sidebar.number_input("Número de máquinas ativas (n):", min_value=1, value=10, step=1)
-T = st.sidebar.number_input("Tempo de reposição (T):", min_value=1, value=12, step=1)
-R_PCT = st.sidebar.number_input("Risco Alvo (%):", min_value=0.01, max_value=99.99, value=5.00, step=0.50, format="%.2f")
+T = st.sidebar.number_input("Tempo de reposição (T):", min_value=1, value=1, step=1)
+R_PCT = st.sidebar.number_input("Risco Alvo (%):", min_value=0.01, max_value=99.99, value=5.00, step=1.0, format="%.2f")
 
 risco = R_PCT / 100.0
+LG = L * N
 
 if st.sidebar.button("Calcular Dimensionamento"):
     
@@ -328,7 +325,7 @@ if st.sidebar.button("Calcular Dimensionamento"):
         exibir_resumo_streamlit(df_p, x_p, "Distribuição de Poisson")
         
     with col_tabela2:
-        if m_val >= 10:
+        if LG >= 20:
             exibir_resumo_streamlit(df_n, x_n, "Aproximação Normal")
         else:
-            st.info("Aproximação pela Normal não recomendada pois a média de falhas (m) é menor que 10.")
+            st.info("Aproximação pela Normal não recomendada.")
