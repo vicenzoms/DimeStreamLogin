@@ -27,9 +27,9 @@ def image_to_base64(path):
     except Exception:
         return ""
 
-# Tenta carregar uma imagem de fundo (opcional, removida para não conflitar com a nova imagem)
-# LOGIN_BG_BASE64 = image_to_base64("capa.png")
-# LOGIN_BG_URL = f"data:image/png;base64,{LOGIN_BG_BASE64}" if LOGIN_BG_BASE64 else ""
+# Carrega a imagem enviada para ser o plano de fundo (substituindo a capa.png do código original)
+LOGIN_BG_BASE64 = image_to_base64("image_de9623.png")
+LOGIN_BG_URL = f"data:image/png;base64,{LOGIN_BG_BASE64}" if LOGIN_BG_BASE64 else ""
 
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
@@ -63,10 +63,15 @@ if not st.session_state.authenticated:
             margin: 0 !important;
         }}
 
-        /* Estilo da área de fundo (removido o background-image) */
         .login-bg-full {{
             position: fixed;
             inset: 0;
+            background-image:
+                linear-gradient(90deg, rgba(3,21,43,0.04) 0%, rgba(3,21,43,0.02) 58%, rgba(3,21,43,0.10) 100%),
+                url("{LOGIN_BG_URL}");
+            background-size: 100% 100%;
+            background-position: center center;
+            background-repeat: no-repeat;
             background-color: #03152b;
             z-index: 0;
         }}
@@ -75,16 +80,10 @@ if not st.session_state.authenticated:
             position: relative;
             z-index: 5;
             padding: 28px 38px 18px 38px;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }}
 
         .login-page-content > div[data-testid="stHorizontalBlock"] {{
-            align-items: center !important;
-            width: 100%;
-            max-width: 1200px;
+            align-items: flex-start !important;
         }}
 
         .login-title-box {{
@@ -155,14 +154,12 @@ if not st.session_state.authenticated:
         }}
 
         @media (max-width: 980px) {{
+            .login-bg-full {{
+                background-size: cover;
+                background-position: center center;
+            }}
             .login-page-content {{
                 padding: 18px;
-                flex-direction: column;
-                justify-content: flex-start;
-            }}
-            .login-page-content > div[data-testid="stHorizontalBlock"] {{
-                flex-direction: column-reverse;
-                align-items: center;
             }}
             .login-title-box h2 {{
                 font-size: 1.85rem;
@@ -176,12 +173,14 @@ if not st.session_state.authenticated:
     st.markdown('<div class="login-bg-full"></div>', unsafe_allow_html=True)
     st.markdown('<div class="login-page-content">', unsafe_allow_html=True)
 
-    # Mantendo a estrutura de colunas
     left_space, right_login = st.columns([1.72, 0.52], gap="medium")
 
     with left_space:
-        # Adicionando a imagem enviada na coluna da esquerda
-        st.image("image_de9623.png", use_container_width=True)
+        # Renderiza a imagem também no espaço à esquerda sem quebrar o grid nativo
+        try:
+            st.image("image_de9623.png", use_container_width=True)
+        except Exception:
+            st.markdown("<div style='height: 1px;'></div>", unsafe_allow_html=True)
 
     with right_login:
         st.markdown(
@@ -193,12 +192,12 @@ if not st.session_state.authenticated:
             unsafe_allow_html=True
         )
         with st.form("login_form", clear_on_submit=False):
+            # Criei a lógica para Vicenzo com a senha 12345
             username = st.text_input("Usuário", placeholder="Digite seu usuário")
             password = st.text_input("Senha", type="password", placeholder="Digite sua senha")
             submitted = st.form_submit_button("Entrar", use_container_width=True)
 
         if submitted:
-            # Login e Senha configurados conforme solicitado
             if username.strip().lower() == "vicenzo" and password == "12345":
                 st.session_state.authenticated = True
                 st.rerun()
