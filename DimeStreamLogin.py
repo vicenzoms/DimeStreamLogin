@@ -27,9 +27,9 @@ def image_to_base64(path):
     except Exception:
         return ""
 
-# Tenta carregar uma imagem de fundo (opcional, pode ser a mesma capa.png usada no outro app)
-LOGIN_BG_BASE64 = image_to_base64("capa.png")
-LOGIN_BG_URL = f"data:image/png;base64,{LOGIN_BG_BASE64}" if LOGIN_BG_BASE64 else ""
+# Tenta carregar uma imagem de fundo (opcional, removida para não conflitar com a nova imagem)
+# LOGIN_BG_BASE64 = image_to_base64("capa.png")
+# LOGIN_BG_URL = f"data:image/png;base64,{LOGIN_BG_BASE64}" if LOGIN_BG_BASE64 else ""
 
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
@@ -63,15 +63,10 @@ if not st.session_state.authenticated:
             margin: 0 !important;
         }}
 
+        /* Estilo da área de fundo (removido o background-image) */
         .login-bg-full {{
             position: fixed;
             inset: 0;
-            background-image:
-                linear-gradient(90deg, rgba(3,21,43,0.04) 0%, rgba(3,21,43,0.02) 58%, rgba(3,21,43,0.10) 100%),
-                url("{LOGIN_BG_URL}");
-            background-size: 100% 100%;
-            background-position: center center;
-            background-repeat: no-repeat;
             background-color: #03152b;
             z-index: 0;
         }}
@@ -80,10 +75,16 @@ if not st.session_state.authenticated:
             position: relative;
             z-index: 5;
             padding: 28px 38px 18px 38px;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }}
 
         .login-page-content > div[data-testid="stHorizontalBlock"] {{
-            align-items: flex-start !important;
+            align-items: center !important;
+            width: 100%;
+            max-width: 1200px;
         }}
 
         .login-title-box {{
@@ -154,12 +155,14 @@ if not st.session_state.authenticated:
         }}
 
         @media (max-width: 980px) {{
-            .login-bg-full {{
-                background-size: cover;
-                background-position: center center;
-            }}
             .login-page-content {{
                 padding: 18px;
+                flex-direction: column;
+                justify-content: flex-start;
+            }}
+            .login-page-content > div[data-testid="stHorizontalBlock"] {{
+                flex-direction: column-reverse;
+                align-items: center;
             }}
             .login-title-box h2 {{
                 font-size: 1.85rem;
@@ -173,10 +176,12 @@ if not st.session_state.authenticated:
     st.markdown('<div class="login-bg-full"></div>', unsafe_allow_html=True)
     st.markdown('<div class="login-page-content">', unsafe_allow_html=True)
 
+    # Mantendo a estrutura de colunas
     left_space, right_login = st.columns([1.72, 0.52], gap="medium")
 
     with left_space:
-        st.markdown("<div style='height: 1px;'></div>", unsafe_allow_html=True)
+        # Adicionando a imagem enviada na coluna da esquerda
+        st.image("image_de9623.png", use_container_width=True)
 
     with right_login:
         st.markdown(
@@ -285,11 +290,10 @@ st.sidebar.header("Parâmetros de Entrada")
 
 L = st.sidebar.number_input("Lambda (taxa de falha):", min_value=0.0000, value=0.05, step=0.01, format="%.6f")
 N = st.sidebar.number_input("Número de máquinas ativas (n):", min_value=1, value=10, step=1)
-T = st.sidebar.number_input("Tempo de reposição (t):", min_value=1, value=1, step=1)
-R_PCT = st.sidebar.number_input("Risco Alvo (%):", min_value=0.01, max_value=99.99, value=5.00, step=0.5, format="%.2f")
+T = st.sidebar.number_input("Tempo de reposição (T):", min_value=1, value=12, step=1)
+R_PCT = st.sidebar.number_input("Risco Alvo (%):", min_value=0.01, max_value=99.99, value=5.00, step=0.50, format="%.2f")
 
 risco = R_PCT / 100.0
-lambda_geral = L * N
 
 if st.sidebar.button("Calcular Dimensionamento"):
     
@@ -325,7 +329,7 @@ if st.sidebar.button("Calcular Dimensionamento"):
         exibir_resumo_streamlit(df_p, x_p, "Distribuição de Poisson")
         
     with col_tabela2:
-        if lambda_geral >= 20:
+        if m_val >= 10:
             exibir_resumo_streamlit(df_n, x_n, "Aproximação Normal")
         else:
-            st.info("Aproximação pela Normal não recomendada.")
+            st.info("Aproximação pela Normal não recomendada pois a média de falhas (m) é menor que 10.")
