@@ -285,10 +285,11 @@ st.sidebar.header("Parâmetros de Entrada")
 
 L = st.sidebar.number_input("Lambda (taxa de falha):", min_value=0.0000, value=0.05, step=0.01, format="%.6f")
 N = st.sidebar.number_input("Número de máquinas ativas (n):", min_value=1, value=10, step=1)
-T = st.sidebar.number_input("Tempo de reposição (T):", min_value=1, value=12, step=1)
-R_PCT = st.sidebar.number_input("Risco Alvo (%):", min_value=0.01, max_value=99.99, value=5.00, step=0.50, format="%.2f")
+T = st.sidebar.number_input("Tempo de reposição (t):", min_value=1, value=1, step=1)
+R_PCT = st.sidebar.number_input("Risco Alvo (%):", min_value=0.01, max_value=99.99, value=5.00, step=1, format="%.2f")
 
 risco = R_PCT / 100.0
+lambda_geral = L * N
 
 if st.sidebar.button("Calcular Dimensionamento"):
     
@@ -324,7 +325,7 @@ if st.sidebar.button("Calcular Dimensionamento"):
         exibir_resumo_streamlit(df_p, x_p, "Distribuição de Poisson")
         
     with col_tabela2:
-        if m_val >= 10:
+        if lambda_geral >= 20:
             exibir_resumo_streamlit(df_n, x_n, "Aproximação Normal")
         else:
-            st.info("Aproximação pela Normal não recomendada pois a média de falhas (m) é menor que 10.")
+            st.info("Aproximação pela Normal não recomendada.")
