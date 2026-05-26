@@ -14,9 +14,6 @@ from pathlib import Path
 
 st.set_page_config(page_title="Dimensionamento de Sobressalentes", layout="wide")
 
-# ============================================================
-# LOGIN
-# ============================================================
 
 def image_to_base64(path):
     try:
@@ -193,7 +190,6 @@ if not st.session_state.authenticated:
             submitted = st.form_submit_button("Entrar", use_container_width=True)
 
         if submitted:
-            # Login e Senha configurados conforme solicitado
             if username.strip().lower() == "vicenzo" and password == "12345":
                 st.session_state.authenticated = True
                 st.rerun()
@@ -201,11 +197,8 @@ if not st.session_state.authenticated:
                 st.error("Usuário ou senha incorretos.")
 
     st.markdown('</div>', unsafe_allow_html=True)
-    st.stop()  # Bloqueia a execução do restante do script até autenticar
+    st.stop()  
 
-# ============================================================
-# CÓDIGO ORIGINAL (Dimenstream.py)
-# ============================================================
 
 def calcular_poisson(lmbda, n, t, risco_alvo):
     m = lmbda * n * t
@@ -285,7 +278,7 @@ st.sidebar.header("Parâmetros de Entrada")
 
 L = st.sidebar.number_input("Lambda (taxa de falha):", min_value=0.0000, value=0.05, step=0.01, format="%.6f")
 N = st.sidebar.number_input("Número de máquinas ativas (n):", min_value=1, value=10, step=1)
-T = st.sidebar.number_input("Tempo de reposição (T):", min_value=1, value=1, step=1)
+T = st.sidebar.number_input("Tempo de reposição (t):", min_value=1, value=1, step=1)
 R_PCT = st.sidebar.number_input("Risco Alvo (%):", min_value=0.01, max_value=99.99, value=5.00, step=1.0, format="%.2f")
 
 risco = R_PCT / 100.0
