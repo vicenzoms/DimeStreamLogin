@@ -2,5 +2,5 @@
 pandas
 numpy
 scipy
-base 64
+base64
 pathlib
