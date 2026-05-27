@@ -12,8 +12,7 @@ from scipy.stats import poisson, norm
 import base64
 from pathlib import Path
 
-st.set_page_config(page_title="Dimensionamento de Sobressalentes", layout="wide")
-
+st.set_page_config(page_title="Dimensionamento de Sobressalentes - RANDOM", layout="wide")
 
 def image_to_base64(path):
     try:
@@ -24,13 +23,20 @@ def image_to_base64(path):
     except Exception:
         return ""
 
-# Tenta carregar uma imagem de fundo (opcional, pode ser a mesma capa.png usada no outro app)
+# Tenta carregar as imagens (capa de fundo e logo)
 LOGIN_BG_BASE64 = image_to_base64("capa.png")
 LOGIN_BG_URL = f"data:image/png;base64,{LOGIN_BG_BASE64}" if LOGIN_BG_BASE64 else ""
+
+# Carrega a logo do grupo Random. Certifique-se de ter um arquivo 'logo.png' na mesma pasta.
+LOGO_BASE64 = image_to_base64("logo.png")
+LOGO_HTML = f'<img src="data:image/png;base64,{LOGO_BASE64}" class="login-logo">' if LOGO_BASE64 else ''
 
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
+# ==========================================
+# TELA DE LOGIN (Estilo Materialis / RANDOM)
+# ==========================================
 if not st.session_state.authenticated:
     st.markdown(
         f"""
@@ -38,7 +44,7 @@ if not st.session_state.authenticated:
         html, body, [data-testid="stAppViewContainer"], .stApp {{
             height: 100%;
             overflow: hidden !important;
-            background: #03152b !important;
+            background: #f4f5f7 !important;
         }}
 
         [data-testid="stSidebar"], [data-testid="stToolbar"], [data-testid="stDecoration"] {{
@@ -60,51 +66,62 @@ if not st.session_state.authenticated:
             margin: 0 !important;
         }}
 
+        /* Fundo claro com gradiente sobre a imagem, padrão mais acadêmico e limpo */
         .login-bg-full {{
             position: fixed;
             inset: 0;
             background-image:
-                linear-gradient(90deg, rgba(3,21,43,0.04) 0%, rgba(3,21,43,0.02) 58%, rgba(3,21,43,0.10) 100%),
+                linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(240,242,245,0.98) 100%),
                 url("{LOGIN_BG_URL}");
-            background-size: 100% 100%;
+            background-size: cover;
             background-position: center center;
             background-repeat: no-repeat;
-            background-color: #03152b;
+            background-color: #f4f5f7;
             z-index: 0;
         }}
 
         .login-page-content {{
             position: relative;
             z-index: 5;
-            padding: 28px 38px 18px 38px;
-        }}
-
-        .login-page-content > div[data-testid="stHorizontalBlock"] {{
-            align-items: flex-start !important;
+            padding: 8vh 38px 18px 38px;
+            display: flex;
+            justify-content: center;
         }}
 
         .login-title-box {{
-            margin-top: 16px;
-            margin-bottom: 10px;
+            margin-top: 5px;
+            margin-bottom: 20px;
             text-align: center;
+        }}
+        
+        .login-logo {{
+            max-height: 80px;  /* Altura máxima da logo para ficar proporcional no card */
+            width: auto;
+            margin-bottom: 15px;
         }}
 
         .login-title-box h2 {{
             margin: 0;
-            font-size: 2.15rem;
-            font-weight: 900;
-            letter-spacing: -0.04em;
-            color: #ffffff;
-            text-shadow: 0 3px 14px rgba(0,0,0,0.42);
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #1976D2; /* Azul estilo Materialis/UFPE */
+            font-family: 'Roboto', sans-serif;
+        }}
+        
+        .login-title-box p {{
+            color: #666666;
+            font-size: 0.95rem;
+            margin-top: 5px;
         }}
 
+        /* Estilo de Card (Material Design) */
         div[data-testid="stForm"] {{
-            background: rgba(255,255,255,0.97) !important;
-            border-radius: 28px !important;
-            border: 1px solid rgba(255,255,255,0.78) !important;
-            box-shadow: 0 24px 56px rgba(0,19,42,0.24) !important;
-            padding: 1.25rem 1.25rem 1.05rem 1.25rem !important;
-            backdrop-filter: blur(8px);
+            background: #ffffff !important;
+            border-radius: 8px !important;
+            border: 1px solid #e0e0e0 !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+            padding: 2.5rem 2rem 2rem 2rem !important;
         }}
 
         div[data-testid="stForm"] > div {{
@@ -114,52 +131,56 @@ if not st.session_state.authenticated:
         }}
 
         div[data-testid="stForm"] label {{
-            color: #2b3443 !important;
-            font-weight: 700 !important;
-            font-size: 0.95rem !important;
+            color: #333333 !important;
+            font-weight: 600 !important;
+            font-size: 0.90rem !important;
         }}
 
         div[data-testid="stForm"] input {{
-            background: #ffffff !important;
-            color: #111827 !important;
-            border: 1px solid rgba(17,24,39,0.14) !important;
-            border-radius: 13px !important;
-            min-height: 2.95rem !important;
-            font-size: 0.96rem !important;
+            background: #fafafa !important;
+            color: #333333 !important;
+            border: 1px solid #cccccc !important;
+            border-radius: 4px !important;
+            min-height: 2.8rem !important;
+            font-size: 0.95rem !important;
+            transition: all 0.2s ease-in-out;
+        }}
+        
+        div[data-testid="stForm"] input:focus {{
+            border-color: #1976D2 !important;
+            box-shadow: 0 0 0 1px #1976D2 !important;
         }}
 
+        /* Botão Material Blue */
         .stFormSubmitButton > button {{
             width: 100% !important;
-            min-height: 2.95rem !important;
-            border-radius: 13px !important;
-            background: #0b76bd !important;
+            min-height: 2.8rem !important;
+            border-radius: 4px !important;
+            background: #1976D2 !important;
             color: #ffffff !important;
             border: 0 !important;
-            font-size: 1rem !important;
-            font-weight: 780 !important;
-            box-shadow: 0 14px 28px rgba(11,118,189,0.28) !important;
+            font-size: 0.95rem !important;
+            font-weight: 600 !important;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 2px 5px rgba(25, 118, 210, 0.3) !important;
+            transition: background 0.2s;
         }}
 
         .stFormSubmitButton > button:hover {{
-            background: #095f98 !important;
+            background: #1565C0 !important;
             color: #ffffff !important;
+            box-shadow: 0 4px 8px rgba(25, 118, 210, 0.4) !important;
         }}
 
         div[data-testid="stAlert"] {{
-            border-radius: 12px !important;
+            border-radius: 4px !important;
             margin-top: 0.75rem !important;
         }}
 
         @media (max-width: 980px) {{
-            .login-bg-full {{
-                background-size: cover;
-                background-position: center center;
-            }}
             .login-page-content {{
-                padding: 18px;
-            }}
-            .login-title-box h2 {{
-                font-size: 1.85rem;
+                padding: 4vh 18px;
             }}
         }}
         </style>
@@ -170,16 +191,17 @@ if not st.session_state.authenticated:
     st.markdown('<div class="login-bg-full"></div>', unsafe_allow_html=True)
     st.markdown('<div class="login-page-content">', unsafe_allow_html=True)
 
-    left_space, right_login = st.columns([1.72, 0.52], gap="medium")
+    # Centraliza o login na tela
+    col_vazia1, col_login, col_vazia2 = st.columns([1, 1.2, 1])
 
-    with left_space:
-        st.markdown("<div style='height: 1px;'></div>", unsafe_allow_html=True)
-
-    with right_login:
+    with col_login:
+        # Título e Logo embutidos no formulário (visualmente)
         st.markdown(
-            """
+            f"""
             <div class="login-title-box">
-                <h2>Acesso</h2>
+                {LOGO_HTML}
+                <h2>Acesso ao Sistema</h2>
+                <p>RANDOM - Grupo de Pesquisa</p>
             </div>
             """,
             unsafe_allow_html=True
@@ -200,6 +222,64 @@ if not st.session_state.authenticated:
     st.stop()  
 
 
+# ==========================================
+# CSS DA TELA PRINCIPAL (Pós-Login)
+# ==========================================
+st.markdown("""
+    <style>
+    /* Estilização base para a tela de execução */
+    .stApp {
+        background-color: #fdfdfd;
+    }
+    
+    /* Cabeçalhos e Títulos */
+    h1, h2, h3 {
+        color: #1976D2 !important;
+        font-family: 'Roboto', sans-serif !important;
+    }
+    
+    /* Barra Lateral */
+    [data-testid="stSidebar"] {
+        background-color: #ffffff !important;
+        border-right: 1px solid #e0e0e0;
+    }
+    
+    /* Botão Primário na Tela Principal */
+    .stButton > button {
+        background-color: #1976D2 !important;
+        color: white !important;
+        border-radius: 4px !important;
+        border: none !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        font-weight: 600 !important;
+        transition: 0.2s;
+    }
+    .stButton > button:hover {
+        background-color: #1565C0 !important;
+        color: white !important;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
+    }
+    
+    /* Métricas */
+    [data-testid="stMetricValue"] {
+        color: #333333 !important;
+    }
+    [data-testid="stMetricLabel"] {
+        color: #666666 !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Linhas divisórias */
+    hr {
+        border-color: #eeeeee !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+
+# ==========================================
+# LÓGICA DA APLICAÇÃO PRINCIPAL
+# ==========================================
 def calcular_poisson(lmbda, n, t, risco_alvo):
     m = lmbda * n * t
     x = 0
@@ -271,8 +351,10 @@ def calcular_normal(lmbda, n, t, risco_alvo):
     
     return df, x_ideal, sigma
 
-st.title("Sistema de Dimensionamento de Sobressalentes")
-st.write("Insira os parâmetros na barra lateral esquerda para calcular as recomendações.")
+# Cabeçalho da página de execução com identidade do grupo
+st.markdown("##### RANDOM – Grupo de Pesquisa em Risco e Análise de Decisão em Operações e Manutenção")
+st.title("Dimensionamento de Sobressalentes")
+st.write("Insira os parâmetros na barra lateral à esquerda para calcular as recomendações.")
 
 st.sidebar.header("Parâmetros de Entrada")
 
