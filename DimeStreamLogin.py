@@ -160,7 +160,7 @@ if not st.session_state.authenticated:
             f"""
             <div class="login-title-box">
                 {LOGO_HTML}
-                <h2>Acesso ao Sistema de Dimenssionamento de Peças Sobressalentes</h2>
+                <h2>Acesso ao Sistema de Dimensionamento de Peças Sobressalentes</h2>
                 <p>RANDOM - Grupo de Pesquisa</p>
             </div>
             """,
