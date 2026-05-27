@@ -41,7 +41,7 @@ if not st.session_state.authenticated:
     st.markdown(
         f"""
         <style>
-        /* Oculta menus padrão do Streamlit na tela de login */
+        /* Oculta menus padrão do Streamlit no ecrã de login */
         html, body, [data-testid="stAppViewContainer"], .stApp {{
             height: 100%;
             overflow: hidden !important;
@@ -92,7 +92,7 @@ if not st.session_state.authenticated:
             font-size: 1.8rem;
             font-weight: 700;
             letter-spacing: -0.02em;
-            color: #1976D2; /* Azul Materialis/UFPE */
+            color: #388E3C; /* Verde Material */
             font-family: 'Roboto', sans-serif;
         }}
         
@@ -121,27 +121,27 @@ if not st.session_state.authenticated:
             font-size: 0.95rem !important;
             transition: all 0.2s ease-in-out;
         }}
-        div[data-testid="stForm"] input:focus {{ border-color: #1976D2 !important; box-shadow: 0 0 0 1px #1976D2 !important; }}
+        div[data-testid="stForm"] input:focus {{ border-color: #388E3C !important; box-shadow: 0 0 0 1px #388E3C !important; }}
 
-        /* Botão Material Blue */
+        /* Botão Material Green */
         .stFormSubmitButton > button {{
             width: 100% !important;
             min-height: 2.8rem !important;
             border-radius: 4px !important;
-            background: #1976D2 !important;
+            background: #388E3C !important;
             color: #ffffff !important;
             border: 0 !important;
             font-size: 0.95rem !important;
             font-weight: 600 !important;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            box-shadow: 0 2px 5px rgba(25, 118, 210, 0.3) !important;
+            box-shadow: 0 2px 5px rgba(56, 142, 60, 0.3) !important;
             transition: background 0.2s;
         }}
         .stFormSubmitButton > button:hover {{
-            background: #1565C0 !important;
+            background: #2E7D32 !important;
             color: #ffffff !important;
-            box-shadow: 0 4px 8px rgba(25, 118, 210, 0.4) !important;
+            box-shadow: 0 4px 8px rgba(56, 142, 60, 0.4) !important;
         }}
 
         div[data-testid="stAlert"] {{ border-radius: 4px !important; margin-top: 0.75rem !important; }}
@@ -191,11 +191,11 @@ if not st.session_state.authenticated:
 st.markdown("""
     <style>
     .stApp { background-color: #fdfdfd; }
-    h1, h2, h3 { color: #1976D2 !important; font-family: 'Roboto', sans-serif !important; }
+    h1, h2, h3 { color: #388E3C !important; font-family: 'Roboto', sans-serif !important; }
     [data-testid="stSidebar"] { background-color: #ffffff !important; border-right: 1px solid #e0e0e0; }
     
     .stButton > button {
-        background-color: #1976D2 !important;
+        background-color: #388E3C !important;
         color: white !important;
         border-radius: 4px !important;
         border: none !important;
@@ -204,7 +204,7 @@ st.markdown("""
         transition: 0.2s;
     }
     .stButton > button:hover {
-        background-color: #1565C0 !important;
+        background-color: #2E7D32 !important;
         color: white !important;
         box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
     }
