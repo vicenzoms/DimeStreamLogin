@@ -2,3 +2,5 @@
 pandas
 numpy
 scipy
+base 64
+pathlib
