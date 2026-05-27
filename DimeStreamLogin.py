@@ -23,20 +23,19 @@ def image_to_base64(path):
     except Exception:
         return ""
 
-# Carrega as imagens (capa de fundo e logo)
+
 LOGIN_BG_BASE64 = image_to_base64("capa.png")
 LOGIN_BG_URL = f"data:image/png;base64,{LOGIN_BG_BASE64}" if LOGIN_BG_BASE64 else ""
 
 LOGO_BASE64 = image_to_base64("logo.png")
 LOGO_HTML = f'<img src="data:image/png;base64,{LOGO_BASE64}" class="login-logo">' if LOGO_BASE64 else ''
 
-# Inicializa o estado de autenticação
+
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
-# ==========================================
-# TELA DE LOGIN (Estilo Materialis / RANDOM)
-# ==========================================
+
+# TELA DE LOGIN 
 if not st.session_state.authenticated:
     st.markdown(
         f"""
@@ -154,7 +153,6 @@ if not st.session_state.authenticated:
     st.markdown('<div class="login-bg-full"></div>', unsafe_allow_html=True)
     st.markdown('<div class="login-page-content">', unsafe_allow_html=True)
 
-    # Colunas para centralizar o formulário no ecrã
     col_vazia1, col_login, col_vazia2 = st.columns([1, 1.2, 1])
 
     with col_login:
@@ -185,9 +183,8 @@ if not st.session_state.authenticated:
     st.stop()  # Impede que o resto do código seja executado sem login
 
 
-# ==========================================
-# CSS DA TELA PRINCIPAL (Pós-Login)
-# ==========================================
+
+# TELA PRINCIPAL (Pós-Login)
 st.markdown("""
     <style>
     .stApp { background-color: #fdfdfd; }
@@ -216,9 +213,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# ==========================================
-# LÓGICA DA APLICAÇÃO PRINCIPAL
-# ==========================================
 def calcular_poisson(lmbda, n, t, risco_alvo):
     m = lmbda * n * t
     x = 0
@@ -341,4 +335,4 @@ if st.sidebar.button("Calcular Dimensionamento"):
         if LG >= 20:
             exibir_resumo_streamlit(df_n, x_n, "Aproximação Normal")
         else:
-            st.info("Aproximação pela Normal não recomendada (Lambda * N < 20).")
+            st.info("Aproximação pela Normal não recomendada.")
