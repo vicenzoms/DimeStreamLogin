@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu May 21 15:17:56 2026
-
-@author: Vicenzo
+Sistema de Dimensionamento de Sobressalentes - Grupo RANDOM
 """
 
 import streamlit as st
@@ -12,9 +10,11 @@ from scipy.stats import poisson, norm
 import base64
 from pathlib import Path
 
+# Configuração inicial da página (deve ser o primeiro comando)
 st.set_page_config(page_title="Dimensionamento de Sobressalentes - RANDOM", layout="wide")
 
 def image_to_base64(path):
+    """Função para converter imagens em Base64 e renderizá-las no HTML/CSS"""
     try:
         image_path = Path(path)
         if not image_path.exists():
@@ -23,14 +23,14 @@ def image_to_base64(path):
     except Exception:
         return ""
 
-# Tenta carregar as imagens (capa de fundo e logo)
+# Carrega as imagens (capa de fundo e logo)
 LOGIN_BG_BASE64 = image_to_base64("capa.png")
 LOGIN_BG_URL = f"data:image/png;base64,{LOGIN_BG_BASE64}" if LOGIN_BG_BASE64 else ""
 
-# Carrega a logo do grupo Random. Certifique-se de ter um arquivo 'logo.png' na mesma pasta.
 LOGO_BASE64 = image_to_base64("logo.png")
 LOGO_HTML = f'<img src="data:image/png;base64,{LOGO_BASE64}" class="login-logo">' if LOGO_BASE64 else ''
 
+# Inicializa o estado de autenticação
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
@@ -41,32 +41,19 @@ if not st.session_state.authenticated:
     st.markdown(
         f"""
         <style>
+        /* Oculta menus padrão do Streamlit na tela de login */
         html, body, [data-testid="stAppViewContainer"], .stApp {{
             height: 100%;
             overflow: hidden !important;
             background: #f4f5f7 !important;
         }}
-
-        [data-testid="stSidebar"], [data-testid="stToolbar"], [data-testid="stDecoration"] {{
+        [data-testid="stSidebar"], [data-testid="stToolbar"], [data-testid="stDecoration"], [data-testid="stHeader"] {{
             display: none !important;
         }}
+        .main, .stApp {{ background: transparent !important; }}
+        .block-container {{ max-width: 100% !important; padding: 0 !important; margin: 0 !important; }}
 
-        [data-testid="stHeader"] {{
-            background: transparent !important;
-            height: 0 !important;
-        }}
-
-        .main, .stApp {{
-            background: transparent !important;
-        }}
-
-        .block-container {{
-            max-width: 100% !important;
-            padding: 0 !important;
-            margin: 0 !important;
-        }}
-
-        /* Fundo claro com gradiente sobre a imagem, padrão mais acadêmico e limpo */
+        /* Fundo claro com gradiente sobre a imagem, padrão mais académico */
         .login-bg-full {{
             position: fixed;
             inset: 0;
@@ -95,7 +82,7 @@ if not st.session_state.authenticated:
         }}
         
         .login-logo {{
-            max-height: 80px;  /* Altura máxima da logo para ficar proporcional no card */
+            max-height: 80px;
             width: auto;
             margin-bottom: 15px;
         }}
@@ -105,7 +92,7 @@ if not st.session_state.authenticated:
             font-size: 1.8rem;
             font-weight: 700;
             letter-spacing: -0.02em;
-            color: #1976D2; /* Azul estilo Materialis/UFPE */
+            color: #1976D2; /* Azul Materialis/UFPE */
             font-family: 'Roboto', sans-serif;
         }}
         
@@ -115,7 +102,7 @@ if not st.session_state.authenticated:
             margin-top: 5px;
         }}
 
-        /* Estilo de Card (Material Design) */
+        /* Estilo do Cartão (Material Design) */
         div[data-testid="stForm"] {{
             background: #ffffff !important;
             border-radius: 8px !important;
@@ -123,19 +110,8 @@ if not st.session_state.authenticated:
             box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
             padding: 2.5rem 2rem 2rem 2rem !important;
         }}
-
-        div[data-testid="stForm"] > div {{
-            background: transparent !important;
-            border: 0 !important;
-            box-shadow: none !important;
-        }}
-
-        div[data-testid="stForm"] label {{
-            color: #333333 !important;
-            font-weight: 600 !important;
-            font-size: 0.90rem !important;
-        }}
-
+        div[data-testid="stForm"] > div {{ background: transparent !important; border: 0 !important; box-shadow: none !important; }}
+        div[data-testid="stForm"] label {{ color: #333333 !important; font-weight: 600 !important; font-size: 0.90rem !important; }}
         div[data-testid="stForm"] input {{
             background: #fafafa !important;
             color: #333333 !important;
@@ -145,11 +121,7 @@ if not st.session_state.authenticated:
             font-size: 0.95rem !important;
             transition: all 0.2s ease-in-out;
         }}
-        
-        div[data-testid="stForm"] input:focus {{
-            border-color: #1976D2 !important;
-            box-shadow: 0 0 0 1px #1976D2 !important;
-        }}
+        div[data-testid="stForm"] input:focus {{ border-color: #1976D2 !important; box-shadow: 0 0 0 1px #1976D2 !important; }}
 
         /* Botão Material Blue */
         .stFormSubmitButton > button {{
@@ -166,23 +138,14 @@ if not st.session_state.authenticated:
             box-shadow: 0 2px 5px rgba(25, 118, 210, 0.3) !important;
             transition: background 0.2s;
         }}
-
         .stFormSubmitButton > button:hover {{
             background: #1565C0 !important;
             color: #ffffff !important;
             box-shadow: 0 4px 8px rgba(25, 118, 210, 0.4) !important;
         }}
 
-        div[data-testid="stAlert"] {{
-            border-radius: 4px !important;
-            margin-top: 0.75rem !important;
-        }}
-
-        @media (max-width: 980px) {{
-            .login-page-content {{
-                padding: 4vh 18px;
-            }}
-        }}
+        div[data-testid="stAlert"] {{ border-radius: 4px !important; margin-top: 0.75rem !important; }}
+        @media (max-width: 980px) {{ .login-page-content {{ padding: 4vh 18px; }} }}
         </style>
         """,
         unsafe_allow_html=True
@@ -191,11 +154,10 @@ if not st.session_state.authenticated:
     st.markdown('<div class="login-bg-full"></div>', unsafe_allow_html=True)
     st.markdown('<div class="login-page-content">', unsafe_allow_html=True)
 
-    # Centraliza o login na tela
+    # Colunas para centralizar o formulário no ecrã
     col_vazia1, col_login, col_vazia2 = st.columns([1, 1.2, 1])
 
     with col_login:
-        # Título e Logo embutidos no formulário (visualmente)
         st.markdown(
             f"""
             <div class="login-title-box">
@@ -206,9 +168,10 @@ if not st.session_state.authenticated:
             """,
             unsafe_allow_html=True
         )
+        
         with st.form("login_form", clear_on_submit=False):
-            username = st.text_input("Usuário", placeholder="Digite seu usuário")
-            password = st.text_input("Senha", type="password", placeholder="Digite sua senha")
+            username = st.text_input("Utilizador", placeholder="Digite o seu utilizador")
+            password = st.text_input("Palavra-passe", type="password", placeholder="Digite a sua palavra-passe")
             submitted = st.form_submit_button("Entrar", use_container_width=True)
 
         if submitted:
@@ -216,10 +179,10 @@ if not st.session_state.authenticated:
                 st.session_state.authenticated = True
                 st.rerun()
             else:
-                st.error("Usuário ou senha incorretos.")
+                st.error("Utilizador ou palavra-passe incorretos.")
 
     st.markdown('</div>', unsafe_allow_html=True)
-    st.stop()  
+    st.stop()  # Impede que o resto do código seja executado sem login
 
 
 # ==========================================
@@ -227,24 +190,10 @@ if not st.session_state.authenticated:
 # ==========================================
 st.markdown("""
     <style>
-    /* Estilização base para a tela de execução */
-    .stApp {
-        background-color: #fdfdfd;
-    }
+    .stApp { background-color: #fdfdfd; }
+    h1, h2, h3 { color: #1976D2 !important; font-family: 'Roboto', sans-serif !important; }
+    [data-testid="stSidebar"] { background-color: #ffffff !important; border-right: 1px solid #e0e0e0; }
     
-    /* Cabeçalhos e Títulos */
-    h1, h2, h3 {
-        color: #1976D2 !important;
-        font-family: 'Roboto', sans-serif !important;
-    }
-    
-    /* Barra Lateral */
-    [data-testid="stSidebar"] {
-        background-color: #ffffff !important;
-        border-right: 1px solid #e0e0e0;
-    }
-    
-    /* Botão Primário na Tela Principal */
     .stButton > button {
         background-color: #1976D2 !important;
         color: white !important;
@@ -260,19 +209,9 @@ st.markdown("""
         box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
     }
     
-    /* Métricas */
-    [data-testid="stMetricValue"] {
-        color: #333333 !important;
-    }
-    [data-testid="stMetricLabel"] {
-        color: #666666 !important;
-        font-weight: 600 !important;
-    }
-    
-    /* Linhas divisórias */
-    hr {
-        border-color: #eeeeee !important;
-    }
+    [data-testid="stMetricValue"] { color: #333333 !important; }
+    [data-testid="stMetricLabel"] { color: #666666 !important; font-weight: 600 !important; }
+    hr { border-color: #eeeeee !important; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -285,7 +224,6 @@ def calcular_poisson(lmbda, n, t, risco_alvo):
     x = 0
     prob_acumulada = 0
     x_ideal = -1
-    
     lista_x, lista_p, lista_margem, lista_risco = [], [], [], []
     
     while True:
@@ -309,8 +247,8 @@ def calcular_poisson(lmbda, n, t, risco_alvo):
         'x': lista_x,
         'P(X=x)': lista_p,
         'Margem Seg.': lista_margem,
-        'Risco': lista_risco })
-    
+        'Risco': lista_risco 
+    })
     return df, x_ideal, m
 
 def calcular_normal(lmbda, n, t, risco_alvo):
@@ -318,12 +256,10 @@ def calcular_normal(lmbda, n, t, risco_alvo):
     sigma = np.sqrt(m)
     x = 0
     x_ideal = -1
-    
     lista_x, lista_p, lista_margem, lista_risco = [], [], [], []
     
     while True:
         prob_acum = norm.cdf(x, loc=m, scale=sigma)
-       
         if x == 0:
             p_x = prob_acum
         else:
@@ -347,11 +283,12 @@ def calcular_normal(lmbda, n, t, risco_alvo):
         'x': lista_x,
         'P(X=x)': lista_p,
         'Margem Seg.': lista_margem,
-        'Risco': lista_risco })
-    
+        'Risco': lista_risco 
+    })
     return df, x_ideal, sigma
 
-# Cabeçalho da página de execução com identidade do grupo
+
+# Cabeçalho da página principal
 st.markdown("##### RANDOM – Grupo de Pesquisa em Risco e Análise de Decisão em Operações e Manutenção")
 st.title("Dimensionamento de Sobressalentes")
 st.write("Insira os parâmetros na barra lateral à esquerda para calcular as recomendações.")
@@ -387,6 +324,7 @@ if st.sidebar.button("Calcular Dimensionamento"):
         idx_inicio = max(0, x_alvo - 1)
         resumo = df.iloc[idx_inicio : x_alvo + 2].copy()
         
+        # Formata as colunas em percentagem
         resumo['P(X=x)'] = resumo['P(X=x)'].apply(lambda v: f"{v:.4%}")
         resumo['Margem Seg.'] = resumo['Margem Seg.'].apply(lambda v: f"{v:.4%}")
         resumo['Risco'] = resumo['Risco'].apply(lambda v: f"{v:.4%}")
@@ -403,4 +341,4 @@ if st.sidebar.button("Calcular Dimensionamento"):
         if LG >= 20:
             exibir_resumo_streamlit(df_n, x_n, "Aproximação Normal")
         else:
-            st.info("Aproximação pela Normal não recomendada.")
+            st.info("Aproximação pela Normal não recomendada (Lambda * N < 20).")
